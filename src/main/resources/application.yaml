@@ -1,0 +1,60 @@
+server:
+  port: ${SERVER_PORT:8087}
+
+spring:
+  application:
+    name: backend-facturacion
+
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/facturacion_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+        default-requeue-rejected: false
+
+ 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/8ea291c8-4670-4598-8f0f-b5e216b5b755/v2.0
+          jwk-set-uri: https://login.microsoftonline.com/8ea291c8-4670-4598-8f0f-b5e216b5b755/discovery/v2.0/keys
+
+
+app:
+  rabbitmq:
+    exchanges:
+      ordenes-topic: "ordenes.topic.exchange"
+      facturacion-direct: "facturacion.direct.exchange"
+      dlx: "facturacion.dlx.exchange"
+    queues:
+      facturacion-orden: "facturacion.orden.creada.queue"
+      facturacion-dlq: "facturacion.orden.creada.dlq"
+      boleta-emitida: "facturacion.boleta.emitida.queue"
+      boleta-emitida-dlq: "facturacion.boleta.emitida.dlq"
+    routing-keys:
+      orden-creada: "orden.creada.#"
+      orden-creada-exact: "orden.creada.key"
+      boleta-emitida: "boleta.emitida.key"
+      dlq: "facturacion.dlq.key"
+      boleta-dlq: "boleta.dlq.key"
