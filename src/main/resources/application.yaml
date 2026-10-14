@@ -5,11 +5,10 @@ spring:
   application:
     name: backend-facturacion
 
-
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/facturacion_db}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:facturacion_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,41 +19,41 @@ spring:
       hibernate:
         format_sql: true
 
-
   rabbitmq:
-    host: ${SPRING_RABBITMQ_HOST:localhost}
-    port: ${SPRING_RABBITMQ_PORT:5672}
-    username: ${SPRING_RABBITMQ_USERNAME:guest}
-    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+    # Lista de nodos del clúster (host1:5672,host2:5672)
+    addresses: ${RABBITMQ_ADDRESSES:localhost:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
     listener:
       simple:
         acknowledge-mode: manual
         prefetch: 1
         default-requeue-rejected: false
 
- 
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://login.microsoftonline.com/8ea291c8-4670-4598-8f0f-b5e216b5b755/v2.0
           jwk-set-uri: https://login.microsoftonline.com/8ea291c8-4670-4598-8f0f-b5e216b5b755/discovery/v2.0/keys
+          # Valida que el token sea para esta app
+          audiences: c6445b4c-7863-42ac-a620-2fa3b5ea58d8
 
-
+# Nombres de exchanges, colas y routing keys centralizados (ver RabbitMQProperties)
 app:
   rabbitmq:
     exchanges:
+      # Consume: orden creada (topic que publica órdenes)
       ordenes-topic: "ordenes.topic.exchange"
+      # Publica: boleta emitida (la consume ordenes)
       facturacion-direct: "facturacion.direct.exchange"
+      # Dead letter exchange propio de este microservicio
       dlx: "facturacion.dlx.exchange"
     queues:
       facturacion-orden: "facturacion.orden.creada.queue"
       facturacion-dlq: "facturacion.orden.creada.dlq"
-      boleta-emitida: "facturacion.boleta.emitida.queue"
-      boleta-emitida-dlq: "facturacion.boleta.emitida.dlq"
     routing-keys:
       orden-creada: "orden.creada.#"
       orden-creada-exact: "orden.creada.key"
       boleta-emitida: "boleta.emitida.key"
       dlq: "facturacion.dlq.key"
-      boleta-dlq: "boleta.dlq.key"

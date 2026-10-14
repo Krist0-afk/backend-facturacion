@@ -79,4 +79,17 @@ public class RabbitAdminService {
         log.info("[RabbitAdminService] Binding creado: Exchange '{}' -> Cola '{}' [key='{}']",
                 req.getExchangeName(), req.getQueueName(), req.getRoutingKey());
     }
+
+    public void eliminarBinding(CrearBindingRequest req) {
+        Binding binding = new Binding(
+                req.getQueueName(),
+                Binding.DestinationType.QUEUE,
+                req.getExchangeName(),
+                req.getRoutingKey(),
+                null
+        );
+        rabbitAdmin.removeBinding(binding);
+        log.info("[RabbitAdminService] Binding eliminado: Exchange '{}' -> Cola '{}' [key='{}']",
+                req.getExchangeName(), req.getQueueName(), req.getRoutingKey());
+    }
 }

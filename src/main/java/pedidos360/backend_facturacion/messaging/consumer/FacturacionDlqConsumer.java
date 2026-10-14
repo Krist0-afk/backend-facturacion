@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class FacturacionDlqConsumer {
 
-    @RabbitListener(queues = "${app.rabbitmq.queues.facturacion-dlq}")
+    @RabbitListener(queues = "${app.rabbitmq.queues.facturacion-dlq}", containerFactory = "dlqListenerContainerFactory")
     public void procesarMensajeEnDlq(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         String payload = new String(message.getBody(), StandardCharsets.UTF_8);

@@ -24,8 +24,6 @@ public class RabbitMQProperties {
     public static class Queues {
         private String facturacionOrden;
         private String facturacionDlq;
-        private String boletaEmitida;
-        private String boletaEmitidaDlq;
     }
 
     @Data
@@ -34,6 +32,5 @@ public class RabbitMQProperties {
         private String ordenCreadaExact;
         private String boletaEmitida;
         private String dlq;
-        private String boletaDlq;
     }
 }

@@ -5,6 +5,7 @@ package pedidos360.backend_facturacion.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pedidos360.backend_facturacion.dto.OrdenCreadaEventDto;
 import pedidos360.backend_facturacion.entity.Boleta;
@@ -28,6 +29,13 @@ public class BoletaController {
         return ResponseEntity.ok(Map.of("status", "UP", "service", "backend-facturacion"));
     }
 
+    // Boletas del usuario logueado (el correo sale del JWT)
+    @GetMapping("/boletas/mias")
+    public ResponseEntity<List<Boleta>> misBoletas(Authentication authentication) {
+        return ResponseEntity.ok(boletaService.listarPorEmail(authentication.getName()));
+    }
+
+    // Solo Admin (ver SecurityConfig)
     @GetMapping("/boletas")
     public ResponseEntity<List<Boleta>> listarBoletas(@RequestParam(required = false) String email) {
         if (email != null && !email.isBlank()) {
