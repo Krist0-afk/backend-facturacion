@@ -41,7 +41,15 @@ spring:
 
 # Nombres de exchanges, colas y routing keys centralizados (ver RabbitMQProperties)
 app:
+  security:
+    # Segundo proveedor de login (AWS Cognito)
+    cognito:
+      issuer-uri: ${COGNITO_ISSUER:https://cognito-idp.us-east-1.amazonaws.com/us-east-1_vZp9ZN52O}
+      client-id: ${COGNITO_CLIENT_ID:348a4vr0o6i0ja8u5u7jes7tki}
   rabbitmq:
+    # API de administración de RabbitMQ (la usa RabbitHaService)
+    management:
+      urls: ${RABBITMQ_MANAGEMENT_URLS:http://localhost:15672}
     exchanges:
       # Consume: orden creada (topic que publica órdenes)
       ordenes-topic: "ordenes.topic.exchange"
